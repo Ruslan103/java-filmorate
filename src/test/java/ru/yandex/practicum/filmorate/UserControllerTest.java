@@ -67,7 +67,7 @@ public class UserControllerTest {
     public void testUpdateUser() {
         User user = new User("test@test.com", "testLogin", "Test User", LocalDate.of(1990, 1, 1));
         User result = userController.addUser(user);
-        User updateUser = new User("newTest@test.com", "newTestLogin", "Test User", LocalDate.of(1990, 1, 1));
+        User updateUser = new User("newTest@test.com", "newTestLogin", "newTest User", LocalDate.of(1990, 1, 1));
         updateUser.setId(result.getId());
         User newUser = userController.updateUser(updateUser);
         assertEquals(updateUser, newUser);
