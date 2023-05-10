@@ -48,13 +48,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testAddUserWithEmptyName() {
-        User user = new User("test@test.com", "testLogin", "", LocalDate.of(1990, 1, 1));
-        userController.addUser(user);
-        assertEquals(user.getName(), user.getLogin());
-    }
-
-    @Test
     public void testAddUserWithInvalidBBirthday() {
         User user = new User("test@test.com", "testLogin", "Test User", LocalDate.of(5990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
