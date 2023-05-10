@@ -29,6 +29,9 @@ public class UserController {
             logger.error("Неверная дата рождения: {}", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
+        if (user.getName().isEmpty()) {
+            user.setName(null);
+        }
         id++;
         user.setId(id);
         users.put(id, user);
