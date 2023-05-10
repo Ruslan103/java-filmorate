@@ -24,14 +24,14 @@ public class UserControllerTest {
 
     @Test
     public void addUserTest() {
-        User user = new User("test@test.com", "testLogin", "Test User", LocalDate.of(1990, 1, 1));
+        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
         User result = userController.addUser(user);
         assertEquals(user, result);
     }
 
     @Test
     public void testAddUserWithEmptyEmail() {
-        User user = new User("", "testLogin", "Test User", LocalDate.of(1990, 1, 1));
+        User user = new User("testLogin", "", "Test User", LocalDate.of(1990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.addUser(user);
         });
@@ -40,7 +40,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddUserWithEmptyLogin() {
-        User user = new User("test@test.com", "", "Test User", LocalDate.of(1990, 1, 1));
+        User user = new User("", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.addUser(user);
         });
@@ -49,7 +49,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddUserWithInvalidBBirthday() {
-        User user = new User("test@test.com", "testLogin", "Test User", LocalDate.of(5990, 1, 1));
+        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(5990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.addUser(user);
         });
@@ -58,9 +58,9 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser() {
-        User user = new User("test@test.com", "testLogin", "Test User", LocalDate.of(1990, 1, 1));
+        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
         User result = userController.addUser(user);
-        User updateUser = new User("newTest@test.com", "newTestLogin", "Test User", LocalDate.of(1990, 1, 1));
+        User updateUser = new User("newTestLogin", "Test User", "newTest@test.com", LocalDate.of(1990, 1, 1));
         updateUser.setId(result.getId());
         User newUser = userController.updateUser(updateUser);
         assertEquals(updateUser, newUser);
@@ -68,7 +68,7 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateNonExistentUser() {
-        User user = new User("test@test.com", "testLogin", "Test User", LocalDate.of(1990, 1, 1));
+        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.updateUser(user);
         });
@@ -77,8 +77,8 @@ public class UserControllerTest {
 
     @Test
     public void testGetUser() {
-        User user1 = new User("test1@test.com", "testLogin1", "Test User1", LocalDate.of(1990, 1, 1));
-        User user2 = new User("test2@test.com", "testLogin2", "Test User2", LocalDate.of(1990, 1, 1));
+        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
         List<User> result = userController.getUsers();
