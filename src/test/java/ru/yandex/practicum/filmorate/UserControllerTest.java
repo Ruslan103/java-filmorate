@@ -94,4 +94,3 @@ public class UserControllerTest {
         assertEquals(user2, result.get(1));
     }
 }
-
