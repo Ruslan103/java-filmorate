@@ -21,7 +21,7 @@ public class FilmController {
     @PostMapping("/films/add")
     public Film addFilm(@RequestBody Film film) {
         LocalDate releaseDate = LocalDate.of(1895, 12, 28);
-        int MAX_DESCRIPTION = 200;
+        int maxDescription = 200;
         if (film.getName().isEmpty()) {
             logger.error("Неверное название фильма: {}", film.getName());
             throw new ValidationException("название не может быть пустым");
@@ -34,7 +34,7 @@ public class FilmController {
             logger.error("Неверная дата релиза: {}", film.getReleaseDate());
             throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года");
         }
-        if (film.getDescription().length() > MAX_DESCRIPTION) {
+        if (film.getDescription().length() > maxDescription) {
             logger.error(" Не верное описание: {}", film.getDescription());
             throw new ValidationException("максимальная длина описания — 200 символов");
         }
