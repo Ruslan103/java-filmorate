@@ -2,10 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +15,7 @@ public class UserController {
     HashMap<Integer, User> users = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @PostMapping("/users/add")
+    @PostMapping("/users")
     public User addUser(@RequestBody User user) {
         if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             logger.error("Неверный email: {}", user.getEmail());
@@ -43,7 +40,7 @@ public class UserController {
         return user;
     }
 
-    @PostMapping("/users/update")
+    @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
         int id = user.getId();
         if (users.containsKey(id)) {
