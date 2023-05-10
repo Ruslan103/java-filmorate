@@ -24,4 +24,12 @@ public class User {
         this.login = login;
         this.birthday = birthday;
     }
+
+    public User(String login, String name, int id, String email, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
 }
