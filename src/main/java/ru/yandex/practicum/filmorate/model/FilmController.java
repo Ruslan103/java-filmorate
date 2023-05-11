@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class FilmController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/films")
-    public Film addFilm(@RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         LocalDate releaseDate = LocalDate.of(1895, 12, 28);
         int maxDescription = 200;
         if (film.getName().isEmpty()) {
@@ -43,7 +44,7 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public Film updateFilm(@RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         int id = film.getId();
         if (films.containsKey(id)) {
             films.put(id, film);

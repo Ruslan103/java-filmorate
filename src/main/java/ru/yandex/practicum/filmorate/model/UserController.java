@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/users")
-    public User addUser(@RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             logger.error("Неверный email: {}", user.getEmail());
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@Valid @RequestBody User user) {
         int id = user.getId();
         if (users.containsKey(id)) {
             users.put(id, user);

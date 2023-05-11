@@ -2,31 +2,23 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
 public class User {
     private int id;
+    @Email
     private String email;
+    @NotBlank
     private String login;
+    @NotNull
     private String name;
     private LocalDate birthday;
 
-    public User(String login, String name, String email, LocalDate birthday) {
-        this.email = email;
-        this.login = login;
-        this.name = name;
-        this.birthday = birthday;
-    }
-
-    public User(String login, String email, LocalDate birthday) {
-        this.email = email;
-        this.login = login;
-        this.birthday = birthday;
-    }
-
-    public User(String login, String name, int id, String email, LocalDate birthday) {
-        this.id = id;
+    public User(@NotBlank String login, @NotNull String name, @Email String email, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;
