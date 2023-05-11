@@ -14,11 +14,10 @@ public class User {
     private String email;
     @NotBlank
     private String login;
-    @NotNull
     private String name;
     private LocalDate birthday;
 
-    public User(@NotBlank String login, @NotNull String name, @Email String email, LocalDate birthday) {
+    public User(@NotBlank String login, String name, @Email String email, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;
