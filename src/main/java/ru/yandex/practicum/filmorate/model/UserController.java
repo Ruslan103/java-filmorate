@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -11,23 +10,23 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
+@Slf4j
 public class UserController {
-    int id = 0;
-    HashMap<Integer, User> users = new HashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private int id = 0;
+    private final HashMap<Integer, User> users = new HashMap<>();
 
     @PostMapping("/users")
     public User addUser(@Valid @RequestBody User user) {
         if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            logger.error("Неверный email: {}", user.getEmail());
+            log.error("Неверный email: {}", user.getEmail());
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         }
         if (user.getLogin().isEmpty() || user.getLogin().isBlank()) {
-            logger.error("Неверный логин: {}", user.getLogin());
+            log.error("Неверный логин: {}", user.getLogin());
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
-            logger.error("Неверная дата рождения: {}", user.getBirthday());
+            log.error("Неверная дата рождения: {}", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
         if (user.getName().isEmpty()) {
@@ -36,7 +35,7 @@ public class UserController {
         id++;
         user.setId(id);
         users.put(id, user);
-        logger.info("Добавлен новый пользователь: {}", user.getName());
+        log.info("Добавлен новый пользователь: {}", user.getName());
         return user;
     }
 
@@ -45,9 +44,9 @@ public class UserController {
         int id = user.getId();
         if (users.containsKey(id)) {
             users.put(id, user);
-            logger.info("Пользователь обновлен: {}", user.getName());
+            log.info("Пользователь обновлен: {}", user.getName());
         } else {
-            logger.error("Пользователь не найден: {}", id);
+            log.error("Пользователь не найден: {}", id);
             throw new ValidationException("Пользователь не найден");
         }
         return user;
@@ -55,7 +54,7 @@ public class UserController {
 
     @GetMapping("/users")
     public List<User> getUsers() {
-        logger.debug("получение списка всех пользователей");
+        log.debug("получение списка всех пользователей");
         return new ArrayList<>(users.values());
     }
 }
