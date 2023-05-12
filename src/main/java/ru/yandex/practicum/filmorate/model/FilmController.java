@@ -12,8 +12,8 @@ import java.util.List;
 @RestController
 @Slf4j
 public class FilmController {
-    private final int MAX_DESCRIPTION = 200;
-    private final LocalDate RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private static final int MAX_DESCRIPTION = 200;
+    private static final LocalDate RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private int id = 0;
     private final HashMap<Integer, Film> films = new HashMap<>();
 
