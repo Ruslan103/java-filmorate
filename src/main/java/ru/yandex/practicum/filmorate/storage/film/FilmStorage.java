@@ -10,4 +10,5 @@ public interface FilmStorage {
     public Film addFilm(Film film);
     public Film updateFilm(Film film);
     public List<Film> getFilms();
+    public Film getFilmForId(int id);
 }

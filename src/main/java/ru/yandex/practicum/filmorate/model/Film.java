@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class Film {
@@ -13,6 +14,7 @@ public class Film {
     private String description;
     private LocalDate releaseDate;
     private int duration;
+    private List <Long> likedFilmUsers;
 
     public Film(@NonNull String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;

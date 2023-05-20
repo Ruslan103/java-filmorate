@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
@@ -66,5 +67,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-
+    public Film getFilmForId(int id) {
+        return films.get(id);
+    }
 }
