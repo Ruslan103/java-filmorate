@@ -16,17 +16,17 @@ public class FilmService {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
     }
 
-    public void addLikedFilmUsers(int filmId, long userId) {
+    public void addLikedFilmUser(int filmId, long userId) {
         Film film = inMemoryFilmStorage.getFilmForId(filmId);
         film.getLikedFilmUsers().add(userId);
     }
 
-    public void deleteLikedFilmUsers(int filmId, long userId) {
+    public void deleteLikedFilmUser(int filmId, long userId) {
         Film film = inMemoryFilmStorage.getFilmForId(filmId);
         film.getLikedFilmUsers().remove(userId);
     }
 
-    public List<Film> getTenLikedFilmUsers(int count) {
+    public List<Film> getTenLikedFilmUser(int count) {
         List<Film> films = inMemoryFilmStorage.getFilms(); // список фильмов
         films.sort(Comparator.comparingInt(film -> film.getLikedFilmUsers().size()));
         Collections.reverse(films);

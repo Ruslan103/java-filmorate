@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -40,5 +41,17 @@ public class UserService {
             friends.add(inMemoryUserStorage.getUserForId(friendId));
         }
         return friends;
+    }
+
+    public List<User> mutualFriends(long id, long otherId) {
+        List <User> mutualFriends =new ArrayList<>();
+        User user = inMemoryUserStorage.getUserForId(id);
+        User otherUser = inMemoryUserStorage.getUserForId(otherId);
+        for (long friendId:user.getFriends()){
+            if (otherUser.getFriends().contains(friendId)){
+                User mutualFriend = inMemoryUserStorage.getUserForId(friendId);
+                mutualFriends.add(mutualFriend);           }
+        }
+        return mutualFriends;
     }
 }
