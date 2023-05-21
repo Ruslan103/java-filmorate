@@ -3,15 +3,11 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -40,7 +36,7 @@ public class FilmController {
         return inMemoryFilmStorage.getFilmForId(id);
     }
 
-    @PutMapping("/films/{id}/like/{userId}") //  проверить что добавляется только один пользователь. переделать на триСет
+    @PutMapping("/films/{id}/like/{userId}")
     public void likeFilm(@PathVariable int id, @PathVariable long userId) {
         filmService.addLikedFilmUser(id, userId);
     }
@@ -51,8 +47,12 @@ public class FilmController {
     }
 
     @GetMapping("films/popular?count={count}")
-    public List <Film> getTenLikedFilmUser (int count){
-       return filmService.getTenLikedFilmUser(count);
+    public List<Film> getLikedFilmUser(int count) {
+        return filmService.getTenLikedFilmUser(count);
     }
 
+    @GetMapping("films/popular")
+    public List<Film> getTenLikedFilmUser() {
+        return filmService.getTenLikedFilmUser(10);
+    }
 }

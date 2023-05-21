@@ -2,13 +2,10 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService {
@@ -19,11 +16,12 @@ public class UserService {
     }
 
     //метод добавления в друзья ТЗ 10
-    public void addFriend(long userId, long friendId) {
+    public User addFriend(long userId, long friendId) {
         User user = inMemoryUserStorage.getUserForId(userId);
         User friend = inMemoryUserStorage.getUserForId(friendId);
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
+        return friend;
 
     }
 
@@ -44,13 +42,14 @@ public class UserService {
     }
 
     public List<User> mutualFriends(long id, long otherId) {
-        List <User> mutualFriends =new ArrayList<>();
+        List<User> mutualFriends = new ArrayList<>();
         User user = inMemoryUserStorage.getUserForId(id);
         User otherUser = inMemoryUserStorage.getUserForId(otherId);
-        for (long friendId:user.getFriends()){
-            if (otherUser.getFriends().contains(friendId)){
+        for (long friendId : user.getFriends()) {
+            if (otherUser.getFriends().contains(friendId)) {
                 User mutualFriend = inMemoryUserStorage.getUserForId(friendId);
-                mutualFriends.add(mutualFriend);           }
+                mutualFriends.add(mutualFriend);
+            }
         }
         return mutualFriends;
     }
