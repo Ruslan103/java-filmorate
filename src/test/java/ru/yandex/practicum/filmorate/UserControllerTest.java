@@ -92,12 +92,12 @@ public class UserControllerTest {
     @Test
     public void testAddUser() {
         UserStorage inMemoryUserStorage = new InMemoryUserStorage();
-        UserService userService=new UserService(inMemoryUserStorage);
+        UserService userService = new UserService(inMemoryUserStorage);
         User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
         User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
         inMemoryUserStorage.addUser(user1);
         inMemoryUserStorage.addUser(user2);
-        userService.addFriend(user1.getId(),user2.getId());
+        userService.addFriend(user1.getId(), user2.getId());
         assertTrue(user1.getFriends().contains(user2.getId()));
 
     }
