@@ -34,9 +34,9 @@ public class FilmController {
     }
 
     @GetMapping("/films/{id}")
-    public  ResponseEntity getFilmForId(@PathVariable int id) {
-        Film film=inMemoryFilmStorage.getFilmForId(id);
-        if (film==null){
+    public ResponseEntity getFilmForId(@PathVariable int id) {
+        Film film = inMemoryFilmStorage.getFilmForId(id);
+        if (film == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(film);
@@ -50,11 +50,11 @@ public class FilmController {
     @DeleteMapping("/films/{id}/like/{userId}")
     public ResponseEntity deleteLikeFilmUser(@PathVariable int id, @PathVariable long userId) {
         Film film = inMemoryFilmStorage.getFilmForId(id);
-        if (film==null||!film.getLikedFilmUsers().contains(userId)){
+        if (film == null || !film.getLikedFilmUsers().contains(userId)) {
             return ResponseEntity.notFound().build();
         }
         filmService.deleteLikedFilmUser(id, userId);
-       return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("films/popular")
