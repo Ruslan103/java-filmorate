@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,12 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@Data
 public class UserController {
-    UserStorage inMemoryUserStorage = new InMemoryUserStorage();
-    UserService userService = new UserService(inMemoryUserStorage);
+    @Autowired
+    private UserStorage inMemoryUserStorage;
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/users")
     public User addUser(@Valid @RequestBody User user) {
@@ -44,7 +49,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public ResponseEntity  addFriend(@PathVariable int id, @PathVariable long friendId) {
+    public ResponseEntity addFriend(@PathVariable int id, @PathVariable long friendId) {
         User user = inMemoryUserStorage.getUserForId(id);
         User friend = inMemoryUserStorage.getUserForId(friendId);
         if (user == null || friend == null) {

@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -8,12 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Data
 public class UserService {
-    private final UserStorage inMemoryUserStorage;
-
-    public UserService(UserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
-    }
+    @Autowired
+    private UserStorage inMemoryUserStorage;
 
     //метод добавления в друзья ТЗ 10
     public User addFriend(long userId, long friendId) {

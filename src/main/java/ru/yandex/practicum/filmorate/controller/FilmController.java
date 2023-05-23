@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,28 +15,32 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@Data
 public class FilmController {
-    FilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
-    FilmService filmService = new FilmService(inMemoryFilmStorage);
+
+    @Autowired
+    private  FilmService filmService;
+    @Autowired
+    private FilmStorage filmStorage;
 
     @PostMapping("/films")
     public Film addFilm(@Valid @RequestBody Film film) {
-        return inMemoryFilmStorage.addFilm(film);
+        return filmStorage.addFilm(film);
     }
 
     @PutMapping("/films")
     public Film updateFilm(@Valid @RequestBody Film film) {
-        return inMemoryFilmStorage.updateFilm(film);
+        return filmStorage.updateFilm(film);
     }
 
     @GetMapping("/films")
     public List<Film> getFilms() {
-        return inMemoryFilmStorage.getFilms();
+        return filmStorage.getFilms();
     }
 
     @GetMapping("/films/{id}")
     public ResponseEntity getFilmForId(@PathVariable int id) {
-        Film film = inMemoryFilmStorage.getFilmForId(id);
+        Film film = filmStorage.getFilmForId(id);
         if (film == null) {
             return ResponseEntity.notFound().build();
         }
@@ -48,7 +54,7 @@ public class FilmController {
 
     @DeleteMapping("/films/{id}/like/{userId}")
     public ResponseEntity deleteLikeFilmUser(@PathVariable int id, @PathVariable long userId) {
-        Film film = inMemoryFilmStorage.getFilmForId(id);
+        Film film = filmStorage.getFilmForId(id);
         if (film == null || !film.getLikedFilmUsers().contains(userId)) {
             return ResponseEntity.notFound().build();
         }
