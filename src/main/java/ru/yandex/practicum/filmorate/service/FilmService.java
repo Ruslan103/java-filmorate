@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.Collections;
@@ -25,6 +26,9 @@ public class FilmService {
 
     public void deleteLikedFilmUser(int filmId, long userId) {
         Film film = inMemoryFilmStorage.getFilmForId(filmId);
+        if (film == null || !film.getLikedFilmUsers().contains(userId)){
+            throw new FilmNotFoundException("Фильм не найден");
+        }
         film.getLikedFilmUsers().remove(userId);
     }
 

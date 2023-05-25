@@ -40,23 +40,15 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity getUserForId(@PathVariable int id) {
-        User user = inMemoryUserStorage.getUserForId(id);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
+    public User getUserForId(@PathVariable int id) {
+      return inMemoryUserStorage.getUserForId(id);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public ResponseEntity addFriend(@PathVariable int id, @PathVariable long friendId) {
-        User user = inMemoryUserStorage.getUserForId(id);
+    public User addFriend(@PathVariable int id, @PathVariable long friendId) {
         User friend = inMemoryUserStorage.getUserForId(friendId);
-        if (user == null || friend == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ValidationException("Неверный id"));
-        } else {
-            return ResponseEntity.ok(userService.addFriend(id, friendId));
-        }
+            userService.addFriend(id, friendId);
+            return friend;
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")

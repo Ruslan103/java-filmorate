@@ -11,5 +11,5 @@ public interface FilmStorage {
 
     List<Film> getFilms();
 
-    Film getFilmForId(int id);
+    Film getFilmForId(int id) throws FilmNotFoundException;
 }

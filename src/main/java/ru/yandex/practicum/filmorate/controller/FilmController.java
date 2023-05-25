@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
@@ -39,12 +40,8 @@ public class FilmController {
     }
 
     @GetMapping("/films/{id}")
-    public ResponseEntity getFilmForId(@PathVariable int id) {
-        Film film = filmStorage.getFilmForId(id);
-        if (film == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(film);
+    public Film getFilmForId(@PathVariable int id) {
+        return filmStorage.getFilmForId(id);
     }
 
     @PutMapping("/films/{id}/like/{userId}")
@@ -53,13 +50,10 @@ public class FilmController {
     }
 
     @DeleteMapping("/films/{id}/like/{userId}")
-    public ResponseEntity deleteLikeFilmUser(@PathVariable int id, @PathVariable long userId) {
+    public Film deleteLikeFilmUser(@PathVariable int id, @PathVariable long userId) {
         Film film = filmStorage.getFilmForId(id);
-        if (film == null || !film.getLikedFilmUsers().contains(userId)) {
-            return ResponseEntity.notFound().build();
-        }
         filmService.deleteLikedFilmUser(id, userId);
-        return ResponseEntity.ok().build();
+        return film;
     }
 
     @GetMapping("films/popular")
