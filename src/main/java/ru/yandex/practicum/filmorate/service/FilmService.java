@@ -32,7 +32,6 @@ public class FilmService {
         List<Film> films = inMemoryFilmStorage.getFilms();
         films.sort(Comparator.comparingInt(film -> film.getLikedFilmUsers().size()));
         Collections.reverse(films);
-        List<Film> topFilms = films.stream().limit(count).collect(Collectors.toList());
-        return topFilms;
+        return films.stream().limit(count).collect(Collectors.toList());
     }
 }

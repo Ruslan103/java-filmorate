@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -15,6 +16,7 @@ public class Film {
     private String description;
     private LocalDate releaseDate;
     private int duration;
+    @JsonIgnore
     private Set<Long> likedFilmUsers = new HashSet<>();
 
     public Film(@NonNull String name, String description, LocalDate releaseDate, int duration) {
