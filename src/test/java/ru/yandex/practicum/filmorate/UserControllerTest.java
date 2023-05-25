@@ -4,9 +4,9 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -14,21 +14,23 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class UserControllerTest {
 
-        private UserController userController;
+    private UserController userController;
 
     @BeforeEach
-        public void setUp() {
+    public void setUp() {
         UserStorage inMemoryUserStorage = new InMemoryUserStorage();
         UserService userService = new UserService();
-            userController = new UserController();
-            userController.setInMemoryUserStorage(inMemoryUserStorage);
-            userController.setUserService(userService);
-        }
+        userController = new UserController();
+        userController.setInMemoryUserStorage(inMemoryUserStorage);
+        userController.setUserService(userService);
+    }
+
     @Test
     public void addUserTest() {
         User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
@@ -93,19 +95,4 @@ public class UserControllerTest {
         assertEquals(user1, result.get(0));
         assertEquals(user2, result.get(1));
     }
-
-//    @Test
-//    public void testAddUser() {
-//        UserStorage inMemoryUserStorage = new InMemoryUserStorage();
-//        UserService userService = new UserService(inMemoryUserStorage);
-//        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-//        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
-//        inMemoryUserStorage.addUser(user1);
-//        inMemoryUserStorage.addUser(user2);
-//        userService.addFriend(user1.getId(), user2.getId());
-//        assertTrue(user1.getFriends().contains(user2.getId()));
-//
-//    }
-
 }
-
