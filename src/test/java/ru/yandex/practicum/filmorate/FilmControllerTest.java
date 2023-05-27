@@ -148,8 +148,9 @@ class FilmControllerTest {
         assertFalse(film1.getLikedFilmUsers().contains(user2.getId()));
         assertTrue(film1.getLikedFilmUsers().contains(user1.getId()));
     }
+
     @Test
-    public void testDeleteLikedFilmUserWithIncorrectId(){
+    public void testDeleteLikedFilmUserWithIncorrectId() {
         Film film1 = new Film("Название1", "Описание1", LocalDate.now(), 90);
         User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
         user1.setId(1);
@@ -166,6 +167,38 @@ class FilmControllerTest {
         assertEquals(exception.getParameter(), "Фильм не найден");
     }
 
-
-
+    @Test
+    public void testGetLikedFilmUser() {
+        Film film1 = new Film("Название1", "Описание1", LocalDate.now(), 90);
+        Film film2 = new Film("Название2", "Описание2", LocalDate.now(), 90);
+        Film film3 = new Film("Название3", "Описание3", LocalDate.now(), 90);
+        Film film4 = new Film("Название4", "Описание4", LocalDate.now(), 90);
+        Film film5 = new Film("Название5", "Описание5", LocalDate.now(), 90);
+        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        User user3 = new User("testLogin3", "Test User3", "test3@test.com", LocalDate.of(1990, 1, 1));
+        User user4 = new User("testLogin4", "Test User4", "test4@test.com", LocalDate.of(1990, 1, 1));
+        user1.setId(1);
+        user2.setId(2);
+        user3.setId(3);
+        user4.setId(4);
+        filmController.addFilm(film1);
+        filmController.addFilm(film2);
+        filmController.addFilm(film3);
+        filmController.addFilm(film4);
+        filmController.addLikeFilm(film1.getId(), user1.getId());
+        filmController.addLikeFilm(film1.getId(), user2.getId());
+        filmController.addLikeFilm(film1.getId(), user3.getId());
+        filmController.addLikeFilm(film2.getId(), user1.getId());
+        filmController.addLikeFilm(film2.getId(), user2.getId());
+        filmController.addLikeFilm(film2.getId(), user2.getId());
+        filmController.addLikeFilm(film2.getId(), user2.getId());
+        filmController.addLikeFilm(film3.getId(), user1.getId());
+        List<Film> result = filmController.getPopularFilms(3);
+        assertEquals(result.size(),3);
+        assertTrue(result.contains(film1));
+        assertTrue(result.contains(film2));
+        assertTrue(result.contains(film3));
+        assertFalse(result.contains(film4));
+    }
 }
