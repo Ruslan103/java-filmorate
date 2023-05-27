@@ -99,4 +99,13 @@ class FilmControllerTest {
         assertEquals(film1, result.get(0));
         assertEquals(film2, result.get(1));
     }
+    @Test
+    public void testAddLikedFilmUser(){
+
+
+
+
+
+
+    }
 }

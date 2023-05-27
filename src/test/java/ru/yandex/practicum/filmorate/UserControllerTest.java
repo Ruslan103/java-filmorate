@@ -178,7 +178,7 @@ public class UserControllerTest {
         userController.setInMemoryUserStorage(inMemoryUserStorage);
         User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
         User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
-        User user3 = new User("testLogin2", "Test User3", "test3@test.com", LocalDate.of(1990, 1, 1));
+        User user3 = new User("testLogin3", "Test User3", "test3@test.com", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
         userController.addUser(user3);
@@ -190,5 +190,27 @@ public class UserControllerTest {
         assertTrue(userResult.contains(user3));
     }
 
-
+    @Test
+    public void testMutualFriends() {
+        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        User user3 = new User("testLogin3", "Test User3", "test3@test.com", LocalDate.of(1990, 1, 1));
+        User user4 = new User("testLogin4", "Test User4", "test4@test.com", LocalDate.of(1990, 1, 1));
+        User user5 = new User("testLogin5", "Test User5", "test5@test.com", LocalDate.of(1990, 1, 1));
+        userController.addUser(user1);
+        userController.addUser(user2);
+        userController.addUser(user3);
+        userController.addUser(user4);
+        userController.addUser(user5);
+        userController.addFriend(user1.getId(), user2.getId());
+        userController.addFriend(user1.getId(), user3.getId());
+        userController.addFriend(user4.getId(), user2.getId());
+        userController.addFriend(user4.getId(), user3.getId());
+        userController.addFriend(user4.getId(), user5.getId());
+        List<User> mutualFriends = userController.mutualFriends(user1.getId(), user4.getId());
+        assertEquals(mutualFriends.size(), 2);
+        assertTrue(mutualFriends.contains(user2));
+        assertTrue(mutualFriends.contains(user3));
+        assertFalse(mutualFriends.contains(user5));
+    }
 }
