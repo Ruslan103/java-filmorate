@@ -174,11 +174,21 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetFriends(){
-
+    public void testGetFriends() {
+        userController.setInMemoryUserStorage(inMemoryUserStorage);
+        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        User user3 = new User("testLogin2", "Test User3", "test3@test.com", LocalDate.of(1990, 1, 1));
+        userController.addUser(user1);
+        userController.addUser(user2);
+        userController.addUser(user3);
+        userController.addFriend(user1.getId(), user2.getId());
+        userController.addFriend(user1.getId(), user3.getId());
+        List<User> userResult = userController.getFriends(user1.getId());
+        assertEquals(userResult.size(), 2);
+        assertTrue(userResult.contains(user2));
+        assertTrue(userResult.contains(user3));
     }
-
-
 
 
 }
