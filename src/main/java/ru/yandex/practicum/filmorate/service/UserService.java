@@ -19,7 +19,7 @@ public class UserService {
     private UserStorage inMemoryUserStorage;
 
     //метод добавления в друзья ТЗ 10
-    public User addFriend(long userId, long friendId) {
+    public void addFriend(long userId, long friendId) {
         User user = inMemoryUserStorage.getUserForId(userId);
         User friend = inMemoryUserStorage.getUserForId(friendId);
         if (user == null || friend == null) {
@@ -28,12 +28,15 @@ public class UserService {
         }
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
-        return friend;
     }
 
     public void deleteFriend(long userId, long friendId) {
         User user = inMemoryUserStorage.getUserForId(userId);
         User friend = inMemoryUserStorage.getUserForId(friendId);
+        if (user == null || friend == null) {
+            log.error("Не верно указан id одного из пользователей");
+            throw new UserNotFoundException("Пользователь не найден");
+        }
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
     }

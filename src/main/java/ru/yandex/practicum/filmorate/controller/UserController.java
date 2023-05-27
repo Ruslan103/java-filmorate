@@ -37,19 +37,17 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public User getUserForId(@PathVariable int id) {
+    public User getUserForId(@PathVariable long id) {
         return inMemoryUserStorage.getUserForId(id);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable int id, @PathVariable long friendId) {
-        User friend = inMemoryUserStorage.getUserForId(friendId);
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
         userService.addFriend(id, friendId);
-        return friend;
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable int id, @PathVariable long friendId) {
+    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) {
         userService.deleteFriend(id, friendId);
     }
 
