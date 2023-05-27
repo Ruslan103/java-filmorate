@@ -22,8 +22,8 @@ public class FilmService {
 
     public void addLikedFilmUser(int filmId, long userId) {
         Film film = inMemoryFilmStorage.getFilmForId(filmId);
-        if (film == null || !film.getLikedFilmUsers().contains(userId)) {
-            log.error("Неверно указан id фильма либо пользователя");
+        if (film == null) {
+            log.error("Неверно указан id фильма");
             throw new FilmNotFoundException("Фильм не найден");
         }
         film.getLikedFilmUsers().add(userId);
