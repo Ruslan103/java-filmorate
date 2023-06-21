@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -17,11 +18,24 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserStorage inMemoryUserStorage;
+    @Autowired
+    private UserDbStorage userDbStorage;
 
     //метод добавления в друзья ТЗ 10
+//    public void addFriend(long userId, long friendId) {
+//        User user = inMemoryUserStorage.getUserForId(userId);
+//        User friend = inMemoryUserStorage.getUserForId(friendId);
+//        if (user == null || friend == null) {
+//            log.error("Не верно указан id одного из пользователей");
+//            throw new UserNotFoundException("Пользователь не найден");
+//        }
+//        user.getFriends().add(friendId);
+//        friend.getFriends().add(userId);
+//    }
+
     public void addFriend(long userId, long friendId) {
-        User user = inMemoryUserStorage.getUserForId(userId);
-        User friend = inMemoryUserStorage.getUserForId(friendId);
+        User user = userDbStorage.getUserForId(userId);
+        User friend = userDbStorage.getUserForId(friendId);
         if (user == null || friend == null) {
             log.error("Не верно указан id одного из пользователей");
             throw new UserNotFoundException("Пользователь не найден");
@@ -29,7 +43,6 @@ public class UserService {
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
     }
-
     public void deleteFriend(long userId, long friendId) {
         User user = inMemoryUserStorage.getUserForId(userId);
         User friend = inMemoryUserStorage.getUserForId(friendId);

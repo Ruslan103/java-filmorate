@@ -18,15 +18,24 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
-    @JsonIgnore
-    private Set<Long> friends = new HashSet<>();
 
-    public User(String login, String name, String email, LocalDate birthday) {
+    public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;
         this.birthday = birthday;
     }
+
+//    public User(long id, String email, String login, String name, LocalDate birthday) {
+//        this.id = id;
+//        this.email = email;
+//        this.login = login;
+//        this.name = name;
+//        this.birthday = birthday;
+//    }
+
+    @JsonIgnore
+    private Set<Long> friends = new HashSet<>();
 
     public String getName() {
         if (name == null) {
