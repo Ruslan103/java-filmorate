@@ -8,15 +8,17 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-@Component
+@Component ("userStorage")
 @Data
 @Slf4j
 public class UserDbStorage implements UserStorage {
@@ -24,10 +26,25 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
+        if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
+            log.error("Неверный email: {}", user.getEmail());
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
+        }
+        if (user.getLogin().isEmpty() || user.getLogin().isBlank()) {
+            log.error("Неверный логин: {}", user.getLogin());
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.error("Неверная дата рождения: {}", user.getBirthday());
+            throw new ValidationException("Дата рождения не может быть в будущем");
+        }
+        if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String sql = "INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"id"});
+            PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"user_id"});
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getLogin());
             stmt.setString(3, user.getName());
@@ -41,15 +58,19 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         String sqlQuery = "UPDATE users SET " +
-                "email = ?, login = ?, name = ? " +
-                "birthday = ?" + "where id = ?";
-        jdbcTemplate.update(sqlQuery
-                , user.getEmail()
-                , user.getLogin()
-                , user.getName()
-                , user.getBirthday());
+                "email = ?, login = ?, name = ?, " +
+                "birthday = ? " + "WHERE USER_id = " + user.getId();
+        jdbcTemplate.update(sqlQuery,
+                // user.getId(),
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday());
+
         return getUserForId(user.getId());
+        // значение найдено в базе данных
     }
+
 
     @Override
     public List<User> getUsers() {
@@ -61,17 +82,16 @@ public class UserDbStorage implements UserStorage {
                     rs.getString("name"),
                     rs.getDate("birthday").toLocalDate()
             );
-            user.setId(rs.getLong("id"));
+            user.setId(rs.getLong("user_id"));
             return user;
         });
     }
 
     @Override
     public User getUserForId(long id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where user_id = ?", id);
         if (userRows.next()) {
             User user = new User(
-                    //  userRows.getLong("id"),
                     userRows.getString("email"),
                     userRows.getString("login"),
                     userRows.getString("name"),
