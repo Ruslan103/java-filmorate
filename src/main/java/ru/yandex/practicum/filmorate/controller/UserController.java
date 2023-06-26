@@ -21,9 +21,10 @@ public class UserController {
 //    @Autowired
 //    private UserStorage inMemoryUserStorage;
     @Autowired
+    @Qualifier ("userService")
     private UserService userService;
     @Autowired
-    @Qualifier("userStorage")
+    @Qualifier("userDbStorage")
     private UserStorage userStorage;
 
     @PostMapping("/users")

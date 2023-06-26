@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-@Component ("userStorage")
+@Component ("userDbStorage")
 @Data
 @Slf4j
 public class UserDbStorage implements UserStorage {
@@ -59,16 +59,14 @@ public class UserDbStorage implements UserStorage {
     public User updateUser(User user) {
         String sqlQuery = "UPDATE users SET " +
                 "email = ?, login = ?, name = ?, " +
-                "birthday = ? " + "WHERE USER_id = " + user.getId();
+                "birthday = ? WHERE USER_id = ?";
         jdbcTemplate.update(sqlQuery,
-                // user.getId(),
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
-                user.getBirthday());
-
+                user.getBirthday(),
+                user.getId());
         return getUserForId(user.getId());
-        // значение найдено в базе данных
     }
 
 
