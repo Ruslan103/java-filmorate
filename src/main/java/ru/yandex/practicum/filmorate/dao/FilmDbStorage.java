@@ -14,10 +14,10 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.sql.*;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,7 +61,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         List<Genre> genres = film.getGenres();
         String sqlGenre = "INSERT INTO film_genre (film_id,genre_id) VALUES (?, ?)";
-        if (film.getGenres()!=null) {
+        if (film.getGenres() != null) {
             for (Genre genre : genres) {
                 jdbcTemplate.update(connection -> {
                     PreparedStatement stmt = connection.prepareStatement(sqlGenre);
@@ -69,15 +69,8 @@ public class FilmDbStorage implements FilmStorage {
                     stmt.setInt(2, genre.getId());
                     return stmt;
                 });
+            }
         }
-        }
-//        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from mpa where mpa_id= ?", film.getMpa().getId());
-//        if (mpaRows.next()) {
-//            Mpa mpa = new Mpa(mpaRows.getInt("mpa_id"),
-//                    mpaRows.getString("name"));
-//            film.setMpa(mpa);
-//        }
-//        film.setGenres(getGenresById(film.getId()));
         return film;
     }
 
@@ -123,7 +116,8 @@ public class FilmDbStorage implements FilmStorage {
                     Objects.requireNonNull(filmRows.getDate("release_date")).toLocalDate(),
                     filmRows.getInt("duration")
             );
-          film.setGenres(getGenresById(id));
+            List <Genre> genres =getGenresById(id);
+            film.setGenres(genres);
             film.setMpa(mpa);
             film.setId(id);
             return film;
@@ -134,10 +128,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public Genre getGenreForId(int id) {
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre where id = ?", id);
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre where genre_id = ?", id);
         if (genreRows.next()) {
             Genre genre = new Genre(
-                    genreRows.getInt("id"),
+                    genreRows.getInt("genre_id"),
                     genreRows.getString("name")
             );
             return genre;
