@@ -55,7 +55,15 @@ INSERT INTO genre (genre_id, name)
     VALUES  (1,'Комедия'),            (2,'Драма'),
             (3,'Мультфильм'),            (4,'Триллер'),
             (5,'Документальный'),            (6,'Боевик');
-
+DROP TABLE IF EXISTS film_user_like CASCADE;
+CREATE TABLE IF NOT EXISTS film_user_like
+(
+    film_id int,
+    user_id int,
+    FOREIGN KEY (film_id) REFERENCES films (film_id),
+    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    UNIQUE (film_id, user_id)
+    );
 
 
 
