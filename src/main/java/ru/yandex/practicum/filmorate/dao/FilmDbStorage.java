@@ -17,9 +17,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component("filmDbStorage")
 @Data
@@ -59,7 +57,7 @@ public class FilmDbStorage implements FilmStorage {
             return stmt;
         }, keyHolder);
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        List<Genre> genres = film.getGenres();
+        Set<Genre> genres = film.getGenres();
         String sqlGenre = "INSERT INTO film_genre (film_id,genre_id) VALUES (?, ?)";
         if (film.getGenres() != null) {
             for (Genre genre : genres) {
@@ -86,6 +84,17 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId());
+        Set<Genre> genres = film.getGenres();
+        String sqlGenre = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
+        String sqlDelete = "DELETE FROM film_genre WHERE film_id = ?";
+        if (genres == null || genres.isEmpty()) {
+            jdbcTemplate.update(sqlDelete, film.getId());
+        } else {
+            jdbcTemplate.update(sqlDelete, film.getId());
+            for (Genre genre : genres) {
+                jdbcTemplate.update(sqlGenre, film.getId(), genre.getId());
+            }
+        }
         return getFilmForId(film.getId());
     }
 
@@ -116,7 +125,7 @@ public class FilmDbStorage implements FilmStorage {
                     Objects.requireNonNull(filmRows.getDate("release_date")).toLocalDate(),
                     filmRows.getInt("duration")
             );
-            List <Genre> genres =getGenresById(id);
+            Set<Genre> genres = getGenresById(id);
             film.setGenres(genres);
             film.setMpa(mpa);
             film.setId(id);
@@ -141,9 +150,9 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    public List<Genre> getGenresById(Integer filmId) {
+    public Set<Genre> getGenresById(Integer filmId) {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from film_genre where film_id = ?", filmId);
-        List<Genre> genres = new ArrayList<>();
+        Set<Genre> genres = new HashSet<>();
         while (genreRows.next()) {
             Genre genre = getGenreForId(genreRows.getInt("genre_id"));
             genres.add(genre);

@@ -19,7 +19,7 @@ public class Film {
     private LocalDate releaseDate;
     private int duration;
     @JsonProperty("genres")
-    private List<Genre> genres;
+    private Set<Genre> genres;
     @JsonProperty("mpa")
     private Mpa mpa;
 
@@ -45,7 +45,7 @@ public class Film {
     public Film() {
     }
 
-    public Film(int id, @NonNull String name, String description, LocalDate releaseDate, int duration, List<Genre> genres, Mpa mpa) {
+    public Film(int id, @NonNull String name, String description, LocalDate releaseDate, int duration, Set<Genre> genres, Mpa mpa) {
         this.id = id;
         this.name = name;
         this.description = description;
