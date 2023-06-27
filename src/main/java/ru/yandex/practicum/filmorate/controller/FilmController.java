@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Slf4j
@@ -58,5 +61,24 @@ public class FilmController {
     @GetMapping("films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getLikedFilmUser(count);
+    }
+
+    @GetMapping("/mpa/{id}")
+    public Mpa getMpaForId(@PathVariable int id) {
+        return filmStorage.getMpaForId(id);
+    }
+
+    @GetMapping("/genres/{id}")
+    Genre getGenreForId(@PathVariable int id) {
+        return filmStorage.getGenreForId(id);
+    }
+
+    @GetMapping("/genres")
+    public List <Genre> getAllGenres(){
+        return filmStorage.getAllGenres();
+    }
+    @GetMapping("/mpa")
+   public List <Mpa> getAllMpa(){
+        return filmStorage.getAllMpa();
     }
 }

@@ -17,7 +17,10 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Component("filmDbStorage")
 @Data
@@ -102,13 +105,17 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getFilms() {
         String sqlQuery = "SELECT * FROM films";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
+            Mpa mpa = getMpaForId(rs.getInt("mpa_id"));
             Film film = new Film(
                     rs.getString("name"),
                     rs.getString("description"),
                     rs.getDate("release_date").toLocalDate(),
                     rs.getInt("duration")
             );
+            film.setMpa(mpa);
             film.setId(rs.getInt("film_id"));
+            Set<Genre> genres = getGenresByFilmId(film.getId());
+            film.setGenres(genres);
             return film;
         });
     }
@@ -125,7 +132,7 @@ public class FilmDbStorage implements FilmStorage {
                     Objects.requireNonNull(filmRows.getDate("release_date")).toLocalDate(),
                     filmRows.getInt("duration")
             );
-            Set<Genre> genres = getGenresById(id);
+            Set<Genre> genres = getGenresByFilmId(id);
             film.setGenres(genres);
             film.setMpa(mpa);
             film.setId(id);
@@ -136,6 +143,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    @Override
     public Genre getGenreForId(int id) {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genre where genre_id = ?", id);
         if (genreRows.next()) {
@@ -150,7 +158,8 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    public Set<Genre> getGenresById(Integer filmId) {
+    @Override
+    public Set<Genre> getGenresByFilmId(Integer filmId) {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from film_genre where film_id = ?", filmId);
         Set<Genre> genres = new HashSet<>();
         while (genreRows.next()) {
@@ -160,6 +169,7 @@ public class FilmDbStorage implements FilmStorage {
         return genres;
     }
 
+    @Override
     public Mpa getMpaForId(int id) {
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from mpa where mpa_id= ?", id);
         if (mpaRows.next()) {
@@ -171,4 +181,31 @@ public class FilmDbStorage implements FilmStorage {
             throw new FilmNotFoundException("MPA не найден");
         }
     }
+
+    @Override
+    public List <Genre> getAllGenres(){
+        String sqlQuery = "SELECT * FROM genre ORDER BY genre_id";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
+            Genre genre =new Genre(
+                    rs.getInt("genre_id"),
+                    rs.getString("name")
+            );
+            return genre;
+        });
+    }
+
+    @Override
+    public List <Mpa> getAllMpa(){
+        String sqlQuery = "SELECT * FROM mpa ORDER BY mpa_id";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
+           Mpa mpa = new Mpa(
+                   rs.getInt("mpa_id"),
+                   rs.getString("name")
+           );
+            return mpa;
+        });
+    }
+
+
+
 }
