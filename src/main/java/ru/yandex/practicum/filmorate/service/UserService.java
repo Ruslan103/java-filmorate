@@ -42,6 +42,12 @@ public class UserService {
     }
 
     public void deleteFriend(long userId, long friendId) {
+        User user = userStorage.getUserForId(userId);
+        User friend = userStorage.getUserForId(friendId);
+        if (user == null || friend == null) {
+            log.error("Не верно указан id одного из пользователей");
+            throw new UserNotFoundException("Пользователь не найден");
+        }
         String sqlQuery = "delete from friends where user_id = ? AND friend_Id = ?";
         jdbcTemplate.update(sqlQuery, userId, friendId);
     }

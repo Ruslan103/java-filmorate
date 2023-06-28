@@ -1,51 +1,47 @@
 package ru.yandex.practicum.filmorate;
 
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class UserControllerTest {
     @Autowired
     private UserController userController;
     @Autowired
-    private UserStorage inMemoryUserStorage;
+    private UserDbStorage userStorage;
     @Autowired
     private UserService userService;
 
-//    @BeforeEach
-//    public void setUp() {
-//        //userController = new UserController();
-//        userService=new UserService();
-//        userController.setInMemoryUserStorage(inMemoryUserStorage);
-//        userController.setUserService(userService);
-//    }
-
     @Test
     public void addUserTest() {
-        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
+        User user = new User("test@test.com", "Test User", "test", LocalDate.of(1990, 1, 1));
         User result = userController.addUser(user);
         assertEquals(user, result);
     }
 
     @Test
     public void testAddUserWithEmptyEmail() {
-        User user = new User("testLogin", "", "Test User", LocalDate.of(1990, 1, 1));
+        User user = new User(" ", "testLogin", "Test User", LocalDate.of(1990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.addUser(user);
         });
@@ -54,7 +50,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddUserWithEmptyLogin() {
-        User user = new User("", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
+        User user = new User("user@test.com", "", "test", LocalDate.of(1990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.addUser(user);
         });
@@ -63,7 +59,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddUserWithInvalidBBirthday() {
-        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(5990, 1, 1));
+        User user = new User("test@test.com", "Test User", "test", LocalDate.of(5990, 1, 1));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.addUser(user);
         });
@@ -72,7 +68,7 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser() {
-        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
+        User user = new User("test@test.com", "Test User", "test", LocalDate.of(1990, 1, 1));
         User result = userController.addUser(user);
         User updateUser = new User("newTestLogin", "Test User", "newTest@test.com", LocalDate.of(1990, 1, 1));
         updateUser.setId(result.getId());
@@ -82,8 +78,8 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateNonExistentUser() {
-        User user = new User("testLogin", "Test User", "test@test.com", LocalDate.of(1990, 1, 1));
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
+        User user = new User("test@test.com", "Test User", "test", LocalDate.of(1990, 1, 1));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userController.updateUser(user);
         });
         assertEquals("Пользователь не найден", exception.getMessage());
@@ -91,10 +87,10 @@ public class UserControllerTest {
 
     @Test
     public void testGetUser() {
-        inMemoryUserStorage = new InMemoryUserStorage();
-        userController.setInMemoryUserStorage(inMemoryUserStorage);
-        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        // userStorage = new InMemoryUserStorage();
+        userController.setUserStorage(userStorage);
+        User user1 = new User("test1@test", "Test User1", "test1", LocalDate.of(1990, 1, 1));
+        User user2 = new User("test2@test.com", "Test User2", "test", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
         List<User> result = userController.getUsers();
@@ -105,23 +101,23 @@ public class UserControllerTest {
 
     @Test
     public void testAddFriend() {
-        userController.setInMemoryUserStorage(inMemoryUserStorage);
-        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        userController.setUserStorage(userStorage);
+        User user1 = new User("test1@test.com", "Test User1", "test1", LocalDate.of(1990, 1, 1));
+        User user2 = new User("test2@test.com", "Test User2", "test2", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
-        userService.addFriend(user1.getId(), user2.getId());
-        Set<Long> userResult = user1.getFriends();
-        Set<Long> friendResult = user2.getFriends();
-        assertTrue(userResult.contains(user2.getId()));
-        assertTrue(friendResult.contains(user1.getId()));
+        userService.addFriend(1, 2);
+        List<User> userResult = userController.getFriends(1);
+        List<Long> usersId = new ArrayList<>();
+        assertTrue(userResult.contains(userController.getUserForId(2)));
     }
 
     @Test
+
     public void testAddFriendWithIncorrectId() {
-        userController.setInMemoryUserStorage(inMemoryUserStorage);
-        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        userController.setUserStorage(userStorage);
+        User user1 = new User("test1@test.com", "Test User1", "test", LocalDate.of(1990, 1, 1));
+        User user2 = new User("test@test.com", "Test User2", "test", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
@@ -136,49 +132,45 @@ public class UserControllerTest {
 
     @Test
     public void testDeleteFriend() {
-        userController.setInMemoryUserStorage(inMemoryUserStorage);
-        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        userController.setUserStorage(userStorage);
+        User user1 = new User("testLogin1@test.com", "Test User1", "test1", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2@test.com", "Test User2", "test2", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
         userController.addFriend(user1.getId(), user2.getId());
-        Set<Long> userResult = user1.getFriends();
-        Set<Long> friendResult = user2.getFriends();
-        assertTrue(userResult.contains(user2.getId())); // проверяем что добавление в друзья прошло успешно
-        assertTrue(friendResult.contains(user1.getId()));
-        userController.deleteFriend(user1.getId(), user2.getId());
-        assertFalse(userResult.contains(user2.getId()));
-        assertFalse(friendResult.contains(user1.getId()));
+        List<User> userResult = userController.getFriends(1);
+        assertTrue(userResult.contains(userController.getUserForId(2))); // проверяем что добавление в друзья прошло успешно
+        userController.deleteFriend(1, 2);
+        List<User> userResult2 = userController.getFriends(1);
+        assertFalse(userResult2.contains(userController.getUserForId(2)));
     }
 
     @Test
     public void testDeleteFriendWithIncorrectId() {
-        userController.setInMemoryUserStorage(inMemoryUserStorage);
-        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
+        userController.setUserStorage(userStorage);
+        User user1 = new User("testLogin1@test.com", "Test User1", "test1", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2@test.com", "Test User2", "test2", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
-        userController.addFriend(user1.getId(), user2.getId());
-        Set<Long> userResult = user1.getFriends();
-        Set<Long> friendResult = user2.getFriends();
-        assertTrue(userResult.contains(user2.getId())); // проверяем что добавление в друзья прошло успешно
-        assertTrue(friendResult.contains(user1.getId()));
+        userController.addFriend(1, 2);
+        List<User> userResult = userController.getFriends(1);
+        assertTrue(userResult.contains(userController.getUserForId(2))); // проверяем что добавление в друзья прошло успешно
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-            userService.deleteFriend(9999, user2.getId());
+            userService.deleteFriend(-2, 2);
         });
         assertEquals("Пользователь не найден", exception.getMessage());
         UserNotFoundException exception2 = assertThrows(UserNotFoundException.class, () -> {
-            userService.deleteFriend(user1.getId(), 9999);
+            userService.deleteFriend(1, -2);
         });
         assertEquals("Пользователь не найден", exception2.getMessage());
     }
 
     @Test
     public void testGetFriends() {
-        userController.setInMemoryUserStorage(inMemoryUserStorage);
-        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
-        User user3 = new User("testLogin3", "Test User3", "test3@test.com", LocalDate.of(1990, 1, 1));
+        userController.setUserStorage(userStorage);
+        User user1 = new User("testLogin1@test.com", "Test User1", "test1", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2@test.com", "Test User2", "test2", LocalDate.of(1990, 1, 1));
+        User user3 = new User("testLogin3@test.com", "Test User3", "test3", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
         userController.addUser(user3);
@@ -192,21 +184,21 @@ public class UserControllerTest {
 
     @Test
     public void testMutualFriends() {
-        User user1 = new User("testLogin1", "Test User1", "test1@test.com", LocalDate.of(1990, 1, 1));
-        User user2 = new User("testLogin2", "Test User2", "test2@test.com", LocalDate.of(1990, 1, 1));
-        User user3 = new User("testLogin3", "Test User3", "test3@test.com", LocalDate.of(1990, 1, 1));
-        User user4 = new User("testLogin4", "Test User4", "test4@test.com", LocalDate.of(1990, 1, 1));
-        User user5 = new User("testLogin5", "Test User5", "test5@test.com", LocalDate.of(1990, 1, 1));
+        User user1 = new User("testLogin1@test.com", "Test User1", "test1", LocalDate.of(1990, 1, 1));
+        User user2 = new User("testLogin2@test.com", "Test User2", "test2", LocalDate.of(1990, 1, 1));
+        User user3 = new User("testLogin3@test.com", "Test User3", "test3", LocalDate.of(1990, 1, 1));
+        User user4 = new User("testLogin4@test.com", "Test User4", "test4", LocalDate.of(1990, 1, 1));
+        User user5 = new User("testLogin5@test.com", "Test User5", "test5", LocalDate.of(1990, 1, 1));
         userController.addUser(user1);
         userController.addUser(user2);
         userController.addUser(user3);
         userController.addUser(user4);
         userController.addUser(user5);
-        userController.addFriend(user1.getId(), user2.getId());
-        userController.addFriend(user1.getId(), user3.getId());
-        userController.addFriend(user4.getId(), user2.getId());
-        userController.addFriend(user4.getId(), user3.getId());
-        userController.addFriend(user4.getId(), user5.getId());
+        userController.addFriend(1, 2);
+        userController.addFriend(1, 3);
+        userController.addFriend(4, 2);
+        userController.addFriend(4, 3);
+        userController.addFriend(4, 5);
         List<User> mutualFriends = userController.mutualFriends(user1.getId(), user4.getId());
         assertEquals(mutualFriends.size(), 2);
         assertTrue(mutualFriends.contains(user2));
