@@ -1,1 +1,0 @@
-SELECT * FROM film_user_like ;

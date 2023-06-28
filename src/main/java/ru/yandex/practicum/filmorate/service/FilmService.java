@@ -8,14 +8,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.sql.PreparedStatement;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -43,7 +39,7 @@ public class FilmService {
 
     public void deleteLikedFilmUser(int filmId, long userId) {
         Film film = filmStorage.getFilmForId(filmId);
-        if (film == null || userId<=0) {
+        if (film == null || userId <= 0) {
             log.error("Неверно указан id фильма либо пользователя");
             throw new FilmNotFoundException("Фильм не найден");
         }
@@ -57,10 +53,15 @@ public class FilmService {
                 "JOIN films on films.film_id = film_user_like.film_id " +
                 "GROUP BY films.film_id " +
                 "ORDER BY likes_count DESC " +
-                "LIMIT "+count;
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+                "LIMIT " + count;
+        List<Film> likedFilms = jdbcTemplate.query(sql, (rs, rowNum) -> {
             Film film = filmStorage.getFilmForId(rs.getInt("film_id"));
             return film;
         });
+
+        if (likedFilms.isEmpty()) {
+            likedFilms = filmStorage.getFilms();
+        }
+        return likedFilms;
     }
 }
