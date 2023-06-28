@@ -19,8 +19,7 @@ import java.util.List;
 @Data
 @Slf4j
 public class UserService {
-    //    @Autowired
-//    private UserStorage inMemoryUserStorage;
+
     @Autowired
     @Qualifier("userDbStorage")
     private UserStorage userStorage;
@@ -65,8 +64,8 @@ public class UserService {
                 "INNER JOIN friends AS f2 ON f1.friend_id = f2.friend_id\n" +
                 "WHERE f1.user_id = " + userId + " AND f2.user_id = " + friendId;
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
-            long Id = rs.getLong("friend_id");
-            User friend = userStorage.getUserForId(Id);
+            long id = rs.getLong("friend_id");
+            User friend = userStorage.getUserForId(id);
             return friend;
         });
     }
