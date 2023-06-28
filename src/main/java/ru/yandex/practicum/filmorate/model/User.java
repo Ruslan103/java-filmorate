@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.NonNull;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -26,14 +25,6 @@ public class User {
         this.name = name;
         this.birthday = birthday;
     }
-
-//    public User(long id, String email, String login, String name, LocalDate birthday) {
-//        this.id = id;
-//        this.email = email;
-//        this.login = login;
-//        this.name = name;
-//        this.birthday = birthday;
-//    }
 
     @JsonIgnore
     private Set<Long> friends = new HashSet<>();

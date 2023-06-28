@@ -16,9 +16,14 @@ public interface FilmStorage {
     List<Film> getFilms();
 
     Film getFilmForId(int id) throws FilmNotFoundException;
-     Mpa getMpaForId(int id);
+
+    Mpa getMpaForId(int id);
+
     Set<Genre> getGenresByFilmId(Integer filmId);
+
     Genre getGenreForId(int id);
-    List <Genre> getAllGenres ();
-    List <Mpa> getAllMpa();
+
+    List<Genre> getAllGenres();
+
+    List<Mpa> getAllMpa();
 }

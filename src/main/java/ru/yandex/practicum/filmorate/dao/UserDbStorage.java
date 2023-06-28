@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-@Component ("userDbStorage")
+@Component("userDbStorage")
 @Data
 @Slf4j
 public class UserDbStorage implements UserStorage {
@@ -68,7 +68,6 @@ public class UserDbStorage implements UserStorage {
                 user.getId());
         return getUserForId(user.getId());
     }
-
 
     @Override
     public List<User> getUsers() {

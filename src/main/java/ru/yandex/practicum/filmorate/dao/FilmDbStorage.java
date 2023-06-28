@@ -183,10 +183,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List <Genre> getAllGenres(){
+    public List<Genre> getAllGenres() {
         String sqlQuery = "SELECT * FROM genre ORDER BY genre_id";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
-            Genre genre =new Genre(
+            Genre genre = new Genre(
                     rs.getInt("genre_id"),
                     rs.getString("name")
             );
@@ -195,17 +195,14 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List <Mpa> getAllMpa(){
+    public List<Mpa> getAllMpa() {
         String sqlQuery = "SELECT * FROM mpa ORDER BY mpa_id";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
-           Mpa mpa = new Mpa(
-                   rs.getInt("mpa_id"),
-                   rs.getString("name")
-           );
+            Mpa mpa = new Mpa(
+                    rs.getInt("mpa_id"),
+                    rs.getString("name")
+            );
             return mpa;
         });
     }
-
-
-
 }

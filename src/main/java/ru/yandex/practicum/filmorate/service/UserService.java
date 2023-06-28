@@ -43,27 +43,10 @@ public class UserService {
     }
 
     public void deleteFriend(long userId, long friendId) {
-//        User user = userStorage.getUserForId(userId);
-//        User friend = userStorage.getUserForId(friendId);
-//        if (user == null || friend == null) {
-//            log.error("Не верно указан id одного из пользователей");
-//            throw new UserNotFoundException("Пользователь не найден");
-//        }
-//        user.getFriends().remove(friendId);
-//        friend.getFriends().remove(userId);
         String sqlQuery = "delete from friends where user_id = ? AND friend_Id = ?";
         jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
-    //    public List<User> getFriends(long userId) {
-//        String sqlQuery = "SELECT friend_id FROM friends WHERE user_id = ?";
-//        SqlRowSet userRows = jdbcTemplate.queryForRowSet ("SELECT friend_id FROM friends WHERE user_id = ?");
-//        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
-//            long friendId = rs.getLong("friend_id");
-//            User friend = userStorage.getUserForId(friendId);
-//            return friend;
-//        });
-//    }
     public List<User> getFriends(long userId) {
         List<User> friends = new ArrayList<>();
         String query = "SELECT friend_id FROM friends WHERE user_id = ?";

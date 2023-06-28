@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @Slf4j
@@ -74,11 +73,12 @@ public class FilmController {
     }
 
     @GetMapping("/genres")
-    public List <Genre> getAllGenres(){
+    public List<Genre> getAllGenres() {
         return filmStorage.getAllGenres();
     }
+
     @GetMapping("/mpa")
-   public List <Mpa> getAllMpa(){
+    public List<Mpa> getAllMpa() {
         return filmStorage.getAllMpa();
     }
 }
