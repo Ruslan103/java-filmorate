@@ -20,10 +20,15 @@ import java.util.List;
 @Slf4j
 public class UserService {
 
-    @Autowired
     @Qualifier("userDbStorage")
     private UserStorage userStorage;
     private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, JdbcTemplate jdbcTemplate) {
+        this.userStorage = userStorage;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public void addFriend(long userId, long friendId) {
         User user = userStorage.getUserForId(userId);

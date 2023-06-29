@@ -17,10 +17,16 @@ import java.util.List;
 @Data
 @Slf4j
 public class FilmService {
-    @Autowired
+
     @Qualifier("filmDbStorage")
     private FilmStorage filmStorage;
     private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, JdbcTemplate jdbcTemplate) {
+        this.filmStorage = filmStorage;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public void addLikedFilmUser(int filmId, long userId) {
         Film film = filmStorage.getFilmForId(filmId);
@@ -28,7 +34,7 @@ public class FilmService {
             log.error("Неверно указан id фильма");
             throw new FilmNotFoundException("Фильм не найден");
         }
-        String sql = "INSERT INTO film_user_like (film_id, user_id) VALUES (?, ?)";
+        String sql = "MERGE INTO film_user_like (film_id, user_id) KEY(film_id) VALUES (?, ?)";
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"film_id"});
             stmt.setLong(1, filmId);

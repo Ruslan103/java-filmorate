@@ -12,17 +12,22 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import javax.validation.Valid;
 import java.util.List;
 
-
 @RestController
 @Slf4j
 @Data
 public class UserController {
-    @Autowired
+
     @Qualifier("userService")
     private UserService userService;
-    @Autowired
+
     @Qualifier("userDbStorage")
     private UserStorage userStorage;
+
+    @Autowired
+    public UserController(@Qualifier("userService") UserService userService, @Qualifier("userDbStorage") UserStorage userStorage) {
+        this.userService = userService;
+        this.userStorage = userStorage;
+    }
 
     @PostMapping("/users")
     public User addUser(@Valid @RequestBody User user) {

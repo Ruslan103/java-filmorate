@@ -18,12 +18,16 @@ import java.util.List;
 @Slf4j
 @Data
 public class FilmController {
-
-    @Autowired
     private FilmService filmService;
-    @Autowired
+
     @Qualifier("filmDbStorage")
     private FilmStorage filmStorage;
+
+    @Autowired
+    public FilmController(FilmService filmService, @Qualifier("filmDbStorage") FilmStorage filmStorage) {
+        this.filmService = filmService;
+        this.filmStorage = filmStorage;
+    }
 
     @PostMapping("/films")
     public Film addFilm(@Valid @RequestBody Film film) {

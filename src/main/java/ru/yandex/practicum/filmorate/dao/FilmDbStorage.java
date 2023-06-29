@@ -1,7 +1,8 @@
 package ru.yandex.practicum.filmorate.dao;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -23,8 +24,8 @@ import java.util.Objects;
 import java.util.Set;
 
 @Component("filmDbStorage")
-@Data
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmDbStorage implements FilmStorage {
     private static final int MAX_DESCRIPTION = 200;
     private static final LocalDate RELEASE_DATE = LocalDate.of(1895, 12, 28);
