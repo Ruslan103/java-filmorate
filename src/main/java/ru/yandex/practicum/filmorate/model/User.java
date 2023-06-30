@@ -21,7 +21,7 @@ public class User {
     @JsonIgnore
     private Set<Long> friends = new HashSet<>();
 
-    public User(String login, String name, String email, LocalDate birthday) {
+    public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;

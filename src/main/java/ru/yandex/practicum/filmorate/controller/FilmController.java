@@ -3,8 +3,11 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
@@ -15,11 +18,16 @@ import java.util.List;
 @Slf4j
 @Data
 public class FilmController {
+    private FilmService filmService;
+
+    @Qualifier("filmDbStorage")
+    private FilmStorage filmStorage;
 
     @Autowired
-    private FilmService filmService;
-    @Autowired
-    private FilmStorage filmStorage;
+    public FilmController(FilmService filmService, @Qualifier("filmDbStorage") FilmStorage filmStorage) {
+        this.filmService = filmService;
+        this.filmStorage = filmStorage;
+    }
 
     @PostMapping("/films")
     public Film addFilm(@Valid @RequestBody Film film) {
@@ -56,5 +64,25 @@ public class FilmController {
     @GetMapping("films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getLikedFilmUser(count);
+    }
+
+    @GetMapping("/mpa/{id}")
+    public Mpa getMpaForId(@PathVariable int id) {
+        return filmStorage.getMpaForId(id);
+    }
+
+    @GetMapping("/genres/{id}")
+    Genre getGenreForId(@PathVariable int id) {
+        return filmStorage.getGenreForId(id);
+    }
+
+    @GetMapping("/genres")
+    public List<Genre> getAllGenres() {
+        return filmStorage.getAllGenres();
+    }
+
+    @GetMapping("/mpa")
+    public List<Mpa> getAllMpa() {
+        return filmStorage.getAllMpa();
     }
 }

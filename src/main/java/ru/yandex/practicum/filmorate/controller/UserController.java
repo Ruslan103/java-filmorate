@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -11,34 +12,41 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import javax.validation.Valid;
 import java.util.List;
 
-
 @RestController
 @Slf4j
 @Data
 public class UserController {
-    @Autowired
-    private UserStorage inMemoryUserStorage;
-    @Autowired
+
+    @Qualifier("userService")
     private UserService userService;
+
+    @Qualifier("userDbStorage")
+    private UserStorage userStorage;
+
+    @Autowired
+    public UserController(@Qualifier("userService") UserService userService, @Qualifier("userDbStorage") UserStorage userStorage) {
+        this.userService = userService;
+        this.userStorage = userStorage;
+    }
 
     @PostMapping("/users")
     public User addUser(@Valid @RequestBody User user) {
-        return inMemoryUserStorage.addUser(user);
+        return userStorage.addUser(user);
     }
 
     @PutMapping("/users")
     public User updateUser(@Valid @RequestBody User user) {
-        return inMemoryUserStorage.updateUser(user);
+        return userStorage.updateUser(user);
     }
 
     @GetMapping("/users")
     public List<User> getUsers() {
-        return inMemoryUserStorage.getUsers();
+        return userStorage.getUsers();
     }
 
     @GetMapping("/users/{id}")
     public User getUserForId(@PathVariable long id) {
-        return inMemoryUserStorage.getUserForId(id);
+        return userStorage.getUserForId(id);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
